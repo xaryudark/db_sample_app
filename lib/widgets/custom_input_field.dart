@@ -46,7 +46,7 @@ class CustomInputField extends StatelessWidget {
           controller: controller,
           style: TextStyle(color: textColor),
           readOnly: readOnly ?? false,
-          maxLines: maxLines,
+          maxLines: maxLines ?? 1,
           onTap: onTap,
           keyboardType: keyboardType,
           inputFormatters: [LengthLimitingTextInputFormatter(maxLength)],
