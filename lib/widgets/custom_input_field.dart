@@ -14,6 +14,7 @@ class CustomInputField extends StatelessWidget {
   final Color? textColor;
   final TextAlign? textAlign;
   final int? maxLines;
+  final Widget? icon;
   const CustomInputField({
     super.key,
     required this.controller,
@@ -28,6 +29,7 @@ class CustomInputField extends StatelessWidget {
     this.textColor,
     this.textAlign,
     this.maxLines,
+    this.icon,
   });
 
   @override
@@ -42,21 +44,28 @@ class CustomInputField extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: TextFormField(
-          controller: controller,
-          style: TextStyle(color: textColor),
-          readOnly: readOnly ?? false,
-          maxLines: maxLines ?? 1,
-          onTap: onTap,
-          keyboardType: keyboardType,
-          inputFormatters: [LengthLimitingTextInputFormatter(maxLength)],
-          textAlign: textAlign ?? TextAlign.center,
-          obscureText: obscureText ?? false,
-          autocorrect: false,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: hintText,
-          ),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: controller,
+                style: TextStyle(color: textColor),
+                readOnly: readOnly ?? false,
+                maxLines: maxLines ?? 1,
+                onTap: onTap,
+                keyboardType: keyboardType,
+                inputFormatters: [LengthLimitingTextInputFormatter(maxLength)],
+                textAlign: textAlign ?? TextAlign.center,
+                obscureText: obscureText ?? false,
+                autocorrect: false,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: hintText,
+                ),
+              ),
+            ),
+            icon ?? Text(""),
+          ],
         ),
       ),
     );

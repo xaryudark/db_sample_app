@@ -1,11 +1,15 @@
+import 'package:db_sample/models/person.dart';
 import 'package:db_sample/utilities/colors.dart';
 import 'package:db_sample/widgets/custom_button.dart';
 import 'package:db_sample/widgets/custom_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AddCard extends StatefulWidget {
-  const AddCard({super.key});
+  final int? indexOfPerson;
+  final bool newPerson;
+  const AddCard({super.key, required this.newPerson, this.indexOfPerson});
 
   @override
   State<AddCard> createState() => _AddCardState();
@@ -19,6 +23,44 @@ class _AddCardState extends State<AddCard> {
   TextEditingController date = TextEditingController();
   TextEditingController time = TextEditingController();
   TextEditingController description = TextEditingController();
+
+  @override
+  void initState() {
+    loadData();
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    loadTime();
+    super.didChangeDependencies();
+  }
+
+  void loadData() {
+    if (widget.newPerson == true) {
+      return;
+    }
+    username.text = Person.examples[widget.indexOfPerson!].name;
+    surname.text = Person.examples[widget.indexOfPerson!].surname;
+    email.text = Person.examples[widget.indexOfPerson!].email;
+    phone.text = Person.examples[widget.indexOfPerson!].phone;
+    date.text =
+        DateFormat.yMMMEd()
+            .format(Person.examples[widget.indexOfPerson!].date)
+            .toString();
+    description.text = Person.examples[widget.indexOfPerson!].description ?? "";
+  }
+
+  void loadTime() {
+    if (widget.newPerson == true) {
+      return;
+    }
+    time.text = TimeOfDay(
+      hour: Person.examples[widget.indexOfPerson!].time.hour,
+      minute: Person.examples[widget.indexOfPerson!].time.minute,
+    ).format(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -64,6 +106,7 @@ class _AddCardState extends State<AddCard> {
                                     hintText: "Name",
                                     keyboardType: TextInputType.name,
                                     textColor: primaryColor,
+                                    readOnly: widget.newPerson ? false : true,
                                   ),
                                   SizedBox(height: 20),
                                   CustomInputField(
@@ -71,6 +114,7 @@ class _AddCardState extends State<AddCard> {
                                     hintText: "Surname",
                                     keyboardType: TextInputType.name,
                                     textColor: primaryColor,
+                                    readOnly: widget.newPerson ? false : true,
                                   ),
                                 ],
                               ),
@@ -86,6 +130,14 @@ class _AddCardState extends State<AddCard> {
                       maxLength: 50,
                       width: 350,
                       textColor: primaryColor,
+                      readOnly: widget.newPerson ? false : true,
+                      icon:
+                          widget.newPerson
+                              ? Text("")
+                              : IconButton(
+                                onPressed: () {},
+                                icon: Icon(Icons.mail),
+                              ),
                     ),
                     SizedBox(height: 20),
                     CustomInputField(
@@ -95,6 +147,14 @@ class _AddCardState extends State<AddCard> {
                       maxLength: 14,
                       width: 350,
                       textColor: primaryColor,
+                      readOnly: widget.newPerson ? false : true,
+                      icon:
+                          widget.newPerson
+                              ? Text("")
+                              : IconButton(
+                                onPressed: () {},
+                                icon: Icon(Icons.phone),
+                              ),
                     ),
                     SizedBox(height: 20),
                     SizedBox(
@@ -109,6 +169,10 @@ class _AddCardState extends State<AddCard> {
                               readOnly: true,
                               textColor: primaryColor,
                               onTap: () {
+                                if (widget.newPerson == false) {
+                                  return;
+                                }
+
                                 showDatePicker(
                                   context: context,
                                   firstDate: DateTime(1900),
@@ -136,20 +200,25 @@ class _AddCardState extends State<AddCard> {
                               hintText: "Time",
                               readOnly: true,
                               textColor: primaryColor,
-                              onTap:
-                                  () => showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.now(),
-                                  ).then((value) {
-                                    if (value != null) {
-                                      setState(() {
-                                        time.text = TimeOfDay(
-                                          hour: value.hour,
-                                          minute: value.minute,
-                                        ).format(context);
-                                      });
-                                    }
-                                  }),
+                              onTap: () {
+                                if (widget.newPerson == false) {
+                                  return;
+                                }
+
+                                showTimePicker(
+                                  context: context,
+                                  initialTime: TimeOfDay.now(),
+                                ).then((value) {
+                                  if (value != null) {
+                                    setState(() {
+                                      time.text = TimeOfDay(
+                                        hour: value.hour,
+                                        minute: value.minute,
+                                      ).format(context);
+                                    });
+                                  }
+                                });
+                              },
                             ),
                           ),
                         ],
@@ -164,6 +233,7 @@ class _AddCardState extends State<AddCard> {
                       hintText: "Description",
                       maxLines: 10,
                       textAlign: TextAlign.start,
+                      readOnly: widget.newPerson ? false : true,
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 40),
@@ -171,7 +241,7 @@ class _AddCardState extends State<AddCard> {
                         buttonLogic: () {
                           Navigator.pop(context);
                         },
-                        buttonText: "Create",
+                        buttonText: widget.newPerson ? "Create" : "Edit",
                         backgroundColor: oColor2,
                         textColor: primaryColor,
                       ),

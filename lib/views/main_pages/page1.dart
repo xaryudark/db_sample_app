@@ -33,7 +33,9 @@ class _Page1State extends State<Page1> {
               buttonLogic: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddCard()),
+                  MaterialPageRoute(
+                    builder: (context) => AddCard(newPerson: true),
+                  ),
                 );
               },
               icon: Icon(
